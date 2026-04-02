@@ -11,6 +11,7 @@ public interface Stack<E> {
 	 * @return Cantidad de elementos de la pila.
 	 */
 	public int size();
+	
 
 	/**
 	 * Consulta si la pila está vacía.
