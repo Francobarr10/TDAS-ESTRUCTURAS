@@ -1,5 +1,5 @@
 package ar.edu.uns.cs.ed.tdas.tdapila;
-import java.util.EmptyStackException;
+import ar.edu.uns.cs.ed.tdas.excepciones.EmptyStackException;
 /**
  * Implementación de la interfaz Stack utilizando un arreglo.
  * @author Cátedra de Estructuras de Datos, Departamento de Cs. e Ing. de la Computación, UNS.
@@ -14,7 +14,6 @@ public TDAPila(){
     this.tope=-1;
 }
 public void push(E e){
-if (datos==null)throw new IllegalArgumentsException("No se permite null");
 if (tope==datos.length-1){
     redimensionar();
 }
@@ -25,9 +24,10 @@ public E pop(){
     if (isEmpty())throw new EmptyStackException("pila vacia");
     E elemento = datos[tope];
     datos[tope]=null;
+    tope--;
     return elemento;
 }
-public E tope(){
+public E top(){
     if (isEmpty()) throw new EmptyStackException("pila Vacia");
     return datos[tope];
 }
