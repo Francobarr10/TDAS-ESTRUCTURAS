@@ -7,11 +7,11 @@ public class DNodo <E> implements Position<E> {
     public DNodo<E> siguiente;
     public E elemento;
 
-    public DNodo(E e, DNodo<E> ant, DNodo<E> sig){
+    public DNodo(E e, DNodo<E> sig, DNodo<E> ant){
         this.elemento=e;
         this.anterior=ant;
         this.siguiente=sig;
-    }   
+    }    
     public DNodo(E e){
         this.elemento=e;
         this.anterior=null;
