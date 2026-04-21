@@ -30,19 +30,19 @@ public ListaDoblementeEnlazada(){
     }
 
     @Override
-    public Position first() {
+    public Position<E> first() {
         if(isEmpty())throw new EmptyListException("lista vacia");
         return head.getSiguiente();
        }
 
     @Override
-    public Position last() {
+    public Position<E> last() {
         if(isEmpty()) throw new EmptyListException("lista vacia");
         return tail.getAnterior();
     }
 
     @Override
-    public Position next(Position<E> p) {
+    public Position<E> next(Position<E> p) {
         DNodo<E> n= checkPosition(p);
         if(n.getSiguiente()==tail)throw new BoundaryViolationException("siguiente del ultimo");
         return n.getSiguiente(); 
@@ -50,7 +50,7 @@ public ListaDoblementeEnlazada(){
    
 
     @Override
-    public Position prev(Position<E> p) {
+    public Position<E> prev(Position<E> p) {
         DNodo<E> n= checkPosition(p);
         if(n.getAnterior()==head)throw new BoundaryViolationException("anterior del primero");
         return n.getAnterior();
@@ -118,7 +118,6 @@ public ListaDoblementeEnlazada(){
     public Iterable<Position<E>> positions() {
         ListaDoblementeEnlazada<Position<E>> lista = new ListaDoblementeEnlazada<>();
         DNodo<E> actual = this.head.getSiguiente();
-
         while(actual!= tail){
             lista.addLast(actual);
             actual=actual.getSiguiente();

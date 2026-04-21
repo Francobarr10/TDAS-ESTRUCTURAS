@@ -11,36 +11,37 @@ private static final int CAPACIDAD_INICIAL=10;
 
 public TDAPila(){
     datos=(E[])new Object[CAPACIDAD_INICIAL];
-    this.tope=-1;
+    this.tope=0;
 }
 public void push(E e){
-if (tope==datos.length-1){
+if (tope==datos.length){
     redimensionar();
 }
-tope++;
 datos[tope]=e;
+tope++;
+
 }
 public E pop(){
     if (isEmpty())throw new EmptyStackException("pila vacia");
-    E elemento = datos[tope];
-    datos[tope]=null;
+    E elemento = datos[tope-1];
+    datos[tope-1]=null;
     tope--;
     return elemento;
 }
 public E top(){
     if (isEmpty()) throw new EmptyStackException("pila Vacia");
-    return datos[tope];
+    return datos[tope-1];
 }
 public boolean isEmpty(){
-    return tope==-1;
+    return tope==0;
 }
 public int size(){
-    return tope+1;
+    return tope;
 }
 private void redimensionar(){
     int nuevacapacidad = datos.length *2;
     E[]nuevoarreglo =(E[]) new Object[nuevacapacidad];
-    for (int i=0;i<=tope;i++){
+    for (int i=0;i<=tope-1;i++){
         nuevoarreglo[i]=datos[i];
     }
     datos=nuevoarreglo;
