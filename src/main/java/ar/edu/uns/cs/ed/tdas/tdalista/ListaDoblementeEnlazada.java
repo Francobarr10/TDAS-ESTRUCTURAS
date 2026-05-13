@@ -82,6 +82,7 @@ public ListaDoblementeEnlazada(){
         ag.setSiguiente(nuevo);
         cant++;
     }
+
     @Override
     public void addBefore(Position p, E element) {
     DNodo<E> ag=checkPosition(p);
@@ -152,17 +153,16 @@ public ListaDoblementeEnlazada(){
             return elemento;
         } 
     }
-     private DNodo<E> checkPosition(Position <E> p){
+private DNodo<E> checkPosition(Position <E> p){
     try{
         if(p==null)throw new InvalidPositionException("posicion nula");
         if(p.element()==null) throw new InvalidPositionException("posicion eliminada previamente");
         return (DNodo<E>)p;// este casteo sirve para convertir la posición genérica a un nodo específico de la lista enlazada, 
-        // lo que permite acceder a los atributos y métodos específicos de la clase DNodo, como el acceso a los nodos anterior y siguiente, 
-        // así como al elemento almacenado en el nodo.        
-    }
-    catch (ClassCastException e){// vengo aca porque fallo el casting a NODO
-        throw new InvalidPositionException("p no es un nodo de lista");
-    }
+            // lo que permite acceder a los atributos y métodos específicos de la clase DNodo, como el acceso a los nodos anterior y siguiente, 
+            // así como al elemento almacenado en el nodo.        
+        } catch (ClassCastException e){// vengo aca porque fallo el casting a NODO
+            throw new InvalidPositionException("p no es un nodo de lista");
+        }
     }
 public void SegundoyAnteultimo(E e1, E e2){
     if(isEmpty()){

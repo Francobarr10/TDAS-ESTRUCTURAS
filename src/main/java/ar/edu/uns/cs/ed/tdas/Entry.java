@@ -17,4 +17,8 @@ public interface Entry<K,V> {
 	 * @return El valor de la entrada
 	 */
 	public V getValue();
+
+	public void setValue(V value);
+
+	public void setKey(K key);
 }
