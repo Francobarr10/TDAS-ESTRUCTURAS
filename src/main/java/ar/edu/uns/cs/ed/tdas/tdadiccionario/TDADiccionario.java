@@ -1,7 +1,8 @@
 package ar.edu.uns.cs.ed.tdas.tdadiccionario;
 
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidKeyException;
-
+import ar.edu.uns.cs.ed.tdas.tdamapeo.Map;
+import ar.edu.uns.cs.ed.tdas.tdamapeo.TDAMapeo;
 import ar.edu.uns.cs.ed.tdas.Entry;
 import ar.edu.uns.cs.ed.tdas.Position;
 import ar.edu.uns.cs.ed.tdas.TDAEntry;
@@ -58,4 +59,30 @@ public class TDADiccionario<K,V> implements Dictionary<K,V>{
     public Iterable<Entry<K,V>> entries(){
         return D;
     }
+
+    //inciso c
+public Dictionary <K,V> acomodar (Dictionary<K,V> d){
+        Map<K,V> aux = new TDAMapeo<>();
+        for (Entry<K,V> e: d.entries()){
+            aux.put(e.getKey(),e.getValue());
+        }
+        Dictionary<K,V> dres= new TDADiccionario<>();
+        for (Entry<K,V> e : aux.entries()){
+            dres.insert(e.getKey(),e.getValue());
+        }
+    return dres;
+    }
+//inciso d
+public Map<Character,Integer> contadorChar (PositionList<Character> l){
+    Map<Character, Integer> m= new TDAMapeo<>();
+    for(Character c: l){
+        Integer cant = m.get(c);
+        if (cant==null){
+            m.put(c,1);
+        }else{ 
+            m.put(c,cant+1);
+        }
+    }
+    return m;
+} 
 }

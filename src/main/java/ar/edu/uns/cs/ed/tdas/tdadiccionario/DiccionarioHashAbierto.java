@@ -97,4 +97,17 @@ public class DiccionarioHashAbierto<K,V> implements Dictionary<K,V>{
         if (key == null )throw new InvalidKeyException("Clave nula no permitida");
         return Math.abs(key.hashCode()) % n;
     }
+    Iterable<Entry<K,V>> eliminarTodas(K c,V v){
+        if (c==null) throw new InvalidKeyException("Clave nula no permitida");
+        int i = h(c);// una operacion O(1)
+        PositionList<Entry<K,V>> res= new ListaDoblementeEnlazada<>();//O(1)
+        for (Position<Entry<K,V>> p: tabla[i].positions()){//aca 
+            if(p.element().getKey().equals(c) && p.element().getValue().equals(v)){//o(1),O(1),O(1)-o(1)o(1)o(1)=O(1)
+                res.addLast(p.element());//O(1)
+                tabla[i].remove(p);//O(1)
+                cant--;//O(1)
+            }//O(1)
+        }//O(K)k =tamaño del bucket
+        return res;//O(1)
+    }//tiempo en el peor de los casos q K=n, n = numero total de entradas, entonces el tiempo total es O(n)
 }

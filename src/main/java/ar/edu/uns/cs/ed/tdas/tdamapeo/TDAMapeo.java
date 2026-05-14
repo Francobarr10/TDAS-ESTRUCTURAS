@@ -62,5 +62,27 @@ public Iterable<V> values(){
 public Iterable<Entry<K,V>> entries(){
   return M;
 }
-public 
+public PositionList<Pair<Integer,Integer>> incisoA(Map<Integer,Integer> M1, Map<Integer,Integer> M2){
+  PositionList<Pair<Integer,Integer>> l = new ListaDoblementeEnlazada<>();
+  for (Integer k : M1.keys()){
+    Integer v1= M1.get(k);
+    Integer v2= M2.get(k);
+    if (v2!=null){
+      if (!v2.equals(v1)){
+        Pair<Integer,Integer> p1= new Pair<Integer,Integer>(k,v1);
+        Pair<Integer,Integer> p2= new Pair<Integer,Integer>(k,v2);
+        l.addLast(p1);
+        l.addLast(p2);
+      }
+    }
+  }
+return l;
+}
+public boolean incisoB( Map<K,V> M1, Map<K,V> M2){
+  for (K k1: M1.keys()){
+    if (M2.get(k1)==null)
+      return false;
+  }
+  return true;
+}
 }
