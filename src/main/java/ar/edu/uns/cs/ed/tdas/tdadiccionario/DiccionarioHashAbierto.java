@@ -98,16 +98,26 @@ public class DiccionarioHashAbierto<K,V> implements Dictionary<K,V>{
         return Math.abs(key.hashCode()) % n;
     }
     Iterable<Entry<K,V>> eliminarTodas(K c,V v){
-        if (c==null) throw new InvalidKeyException("Clave nula no permitida");
-        int i = h(c);// una operacion O(1)
-        PositionList<Entry<K,V>> res= new ListaDoblementeEnlazada<>();//O(1)
-        for (Position<Entry<K,V>> p: tabla[i].positions()){//aca 
-            if(p.element().getKey().equals(c) && p.element().getValue().equals(v)){//o(1),O(1),O(1)-o(1)o(1)o(1)=O(1)
-                res.addLast(p.element());//O(1)
-                tabla[i].remove(p);//O(1)
-                cant--;//O(1)
-            }//O(1)
-        }//O(K)k =tamaño del bucket
-        return res;//O(1)
-    }//tiempo en el peor de los casos q K=n, n = numero total de entradas, entonces el tiempo total es O(n)
+        if (c==null) throw new InvalidKeyException("Clave nula no permitida");//c0
+        int i = h(c);// una operacion O(1)c1
+        PositionList<Entry<K,V>> res= new ListaDoblementeEnlazada<>();//O(1)c2
+        for (Position<Entry<K,V>> p: tabla[i].positions()){//aca n
+            if(p.element().getKey().equals(c) && p.element().getValue().equals(v)){//c4
+                res.addLast(p.element());//c5
+                tabla[i].remove(p);//c6
+                cant--;//c7
+            }
+        }//k =tamaño del bucket
+        return res;//c8
+    }
+// T(n)= c0+c1+c2+k(c3+c4+c5+c6+c7)+c8,donde k es el tamaño del bucket recorrido.
+// asumiendo q tenemos una buena funcion hash, las claves se distribuyen uniformemente
+// entre los buckets, por lo que k puede considerarse constante.
+// Entonces:
+// T(n)O(1)
+//
+// En el peor caso, si todas las entradas colisionan en el mismo bucket,
+// k = n, y queda:
+// T(n)=O(n)
+// entonces T(n)=O(n)
 }
