@@ -9,6 +9,8 @@ import ar.edu.uns.cs.ed.tdas.excepciones.InvalidOperationException;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidPositionException;
 import ar.edu.uns.cs.ed.tdas.tdalista.ListaDoblementeEnlazada;
 import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
+import ar.edu.uns.cs.ed.tdas.tdamapeo.Map;
+import ar.edu.uns.cs.ed.tdas.tdamapeo.MapHashAbierto;
 
 public class TDAArbol<E>implements Tree<E> {
     protected TNodo<E> raiz;
@@ -235,5 +237,164 @@ public class TDAArbol<E>implements Tree<E> {
             removeExternalNode(p);//O(n)
         else
             removeInternalNode(p);//O(n)
-    }   
-}//c1+max (O(n), O(n)) pertence al orden O(n)
+    }//c1+max (O(n), O(n)) pertence al orden O(n)   
+    
+    public void eliminarUltimoHijo(Position<E> p){
+        if(isEmpty()||p==null) throw new InvalidPositionException("posicion no valida");
+        if(isRoot(p)) throw new InvalidOperationException("es raiz no valida");
+        //a-[b,c-d]// debo eliminar p si es c//a-[b,d]
+        TNodo<E> n= checkPosition(p);
+        TNodo<E> padre= n.getPadre();
+        if(padre.getHijos().last().element() == n){
+            Position<TNodo<E>> pos=padre.getHijos().last();
+            while(!n.getHijos().isEmpty()){
+                TNodo<E> t=n.getHijos().first().element();
+                n.getHijos().remove(n.getHijos().first());
+                padre.getHijos().addLast(t);
+                t.setPadre(padre);
+            }
+            padre.getHijos().remove(pos);
+            size--;
+        }
+    }//O(m), m cant hijos del nodo n, como m en el peor caso es = a n, es de orden O(n)
+    
+    public Map<Character,Integer> cantidadRepeticiones(Tree<Character> t){
+        Map<Character,Integer> m= new MapHashAbierto<Character,Integer>();
+        for (Position<Character> pos: t.positions()){
+            Character c = pos.element();
+            Integer valor= m.get(c);
+            if(valor==null){
+                m.put(c,1);
+            }else{
+                m.put(c,valor+1);
+            }
+        }
+        return m;
+    } 
+    public Iterable<Position<String>> positionsPostOrden(Tree<String> a, String s){
+        PositionList<Position<String>> l= new ListaDoblementeEnlazada<Position<String>>();
+        if(!a.isEmpty()){
+            TNodo<String> r= checkPositionS(a.root());
+            postorden(l,r,s);
+    }
+    return l;
+}
+    private TNodo<String> checkPositionS(Position<String> p) {
+    try{
+            if(p==null)throw new InvalidPositionException("posicion nula");//c1
+            if(p.element()==null) throw new InvalidPositionException("posicion eliminada previamente");//c2
+            return (TNodo<String>)p;// este casteo sirve para convertir la posición genérica a un nodo específico de la lista enlazada//c3 
+            // lo que permite acceder a los atributos y métodos específicos de la clase DNodo, como el acceso a los nodos anterior y siguiente, 
+            // así como al elemento almacenado en el nodo.        
+        }
+        catch (ClassCastException e){// vengo aca porque fallo el casting a NODO//c4
+            throw new InvalidPositionException("p no es un nodo de lista");//c5
+        }
+    }
+
+    private void postorden(PositionList<Position<String>> l,TNodo<String> n,String s ){
+        for (TNodo<String> h:n.getHijos()){
+            postorden(l, h,s);
+        }
+        if(n.element().equals(s))
+        l.addLast(n);
+    }
+    public int eliminarE(Tree<E> a, E e){
+        int cant = 0;
+        if(!a.isEmpty()){
+            TDAArbol<E> arbol = (TDAArbol<E>) a;
+            PositionList<Position<E>> l = new ListaDoblementeEnlazada<Position<E>>();
+            postOrdenE(l, checkPosition(a.root()), e);
+            while(!l.isEmpty()){
+                TNodo<E> n = checkPosition(l.first().element());
+                l.remove(l.first());
+                // CASO 1: ES RAIZ
+                if(n == arbol.raiz){
+                    // raiz hoja
+                    if(n.getHijos().isEmpty()){
+                        arbol.raiz = null;
+                        arbol.size--;
+                        cant++;
+                    }
+                    // raiz con un hijo
+                    else if(n.getHijos().size() == 1){
+                        arbol.raiz =
+                        n.getHijos().first().element();
+                        arbol.raiz.setPadre(null);
+                        arbol.size--;
+                        cant++;
+                    }
+                    // raiz con más de un hijo
+                    // no se puede borrar
+                    else {
+                        throw new InvalidPositionException("raiz con mas de un hijo");
+                    }
+                }
+                // CASO 2: EXTERNO
+                else if(n.getHijos().isEmpty()){
+                    TNodo<E> padre = n.getPadre();
+                    for(Position<TNodo<E>> pos :padre.getHijos().positions()){
+                        if(pos.element() == n){
+                            padre.getHijos().remove(pos);
+                            arbol.size--;
+                            cant++;
+                            break;
+                        }
+                    }
+                }
+                // CASO 3: INTERNO
+                else{
+                    TNodo<E> padre = n.getPadre();
+                    Position<TNodo<E>> posN = null;
+                    for(Position<TNodo<E>> pos :padre.getHijos().positions()){
+                        if(pos.element() == n){
+                            posN = pos;
+                           break;
+                        }
+                    }
+                    while(!n.getHijos().isEmpty()){
+                        TNodo<E> t =n.getHijos().first().element();
+                        n.getHijos().remove(n.getHijos().first());
+                        t.setPadre(padre);
+                        padre.getHijos().addBefore(posN, t);
+                    }
+                    padre.getHijos().remove(posN);
+                    arbol.size--;
+                    cant++;
+                }
+            }
+        }
+        return cant;
+    }
+    
+    public int eliminarE2(Tree<E> a, E e){
+        int cant = 0;
+        if(!a.isEmpty()){
+            PositionList<Position<E>> l =new ListaDoblementeEnlazada<Position<E>>();
+            postOrdenE(l, checkPosition(a.root()), e);
+            while(!l.isEmpty()){
+                Position<E> p = l.first().element();
+                l.remove(l.first());
+                removeNode(p);
+                cant++;
+            }
+        }
+        return cant;
+    }
+    public void postOrdenE(PositionList<Position<E>> l, TNodo<E> r, E e){
+        for(TNodo<E> t: r.getHijos())
+            postOrdenE(l, t, e);
+        if(r.element().equals(e)){
+            l.addLast(r);
+            }
+    }
+    public boolean perteneceInt(Tree<Integer> a, int n){
+        Iterator<Integer> it= a.iterator();//c1
+        while(it.hasNext()){//aca k
+            if(it.next()==n){//c2
+                return true;//c3
+            }
+        }
+        return false;//c4
+    }//c1+MAX(k*(c2+c3),C4) = C1+k(o(1))=K(o(1))= o(K) EN EL PEOR CASO K<=N ENTONCES ES DE ORDEN o(N)
+}

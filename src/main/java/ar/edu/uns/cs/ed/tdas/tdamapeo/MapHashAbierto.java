@@ -14,7 +14,6 @@ public class MapHashAbierto<K,V> implements Map<K,V> {
     protected int cant; // tamaño del arreglo de posiciones
     protected PositionList<Entry<K,V>>[] tabla; // arreglo de posiciones}
 
-
 public MapHashAbierto() {
 n=13;
 tabla =new PositionList[n];
@@ -55,7 +54,42 @@ public V put(K key, V value){
   }
   tabla[i].addLast(new TDAEntry<>(key, value));
   cant++;
+  if ((double)cant/n>0.9)
+    rehash();
   return null;
+}
+private void rehash(){
+  PositionList<Entry<K,V>>[] lvieja = tabla;
+  n= siguientePrimo(2*n);
+  tabla= new PositionList[n];
+  for ( int i =0 ; i<n; i++){
+    tabla[i]=new ListaDoblementeEnlazada<Entry<K,V>>();
+  }
+  for (int i=0;i<lvieja.length;i++){
+    for(Entry<K,V> e: lvieja[i]){
+      int j=h(e.getKey());
+      tabla[j].addLast(e);
+    }
+  }
+}
+private int siguientePrimo(int x){
+
+    while(!esPrimo(x)){
+        x++;
+    }
+
+    return x;
+}
+private boolean esPrimo(int x){
+
+    if(x < 2) return false;
+
+    for(int i=2; i<x; i++){
+        if(x % i == 0)
+            return false;
+    }
+
+    return true;
 }
 public V remove(K key){
     if (key == null) throw new InvalidKeyException("Clave nula no permitida");

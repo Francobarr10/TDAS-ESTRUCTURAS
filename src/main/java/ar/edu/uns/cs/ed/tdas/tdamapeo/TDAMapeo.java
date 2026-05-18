@@ -8,7 +8,7 @@ import ar.edu.uns.cs.ed.tdas.TDAEntry;
 public class TDAMapeo<K,V> implements Map<K,V> {
   protected PositionList<Entry<K, V>> M;  
   public TDAMapeo() {
-    M = new ListaDoblementeEnlazada<>();
+    M = new ListaDoblementeEnlazada<Entry<K,V>>();
   }
 public int size() {
     return M.size();
