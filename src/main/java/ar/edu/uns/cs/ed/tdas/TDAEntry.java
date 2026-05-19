@@ -7,7 +7,6 @@ public class TDAEntry<K,V> implements Entry<K,V> {
         this.key = key;
         this.value = value;
     }
-
     public K getKey() {
         return key;
     }

@@ -28,7 +28,7 @@ public int size() {
 public boolean isEmpty() {
     return cant == 0;
 }
-public V get(K key){
+public V get(K key){// lo q hace aqui es buscar la clave en la tabla hash, si la encuentra devuelve el valor asociado, sino devuelve null
     if (key == null) throw new InvalidKeyException("Clave nula no permitida");
     int i = h(key);
     for (Entry<K,V> e: tabla[i]){

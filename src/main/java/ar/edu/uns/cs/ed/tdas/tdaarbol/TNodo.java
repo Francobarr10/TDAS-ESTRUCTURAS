@@ -15,7 +15,8 @@ public class TNodo<E> implements Position<E>{
     }
 
     public TNodo(E ele){ 
-        this(ele,null); 
+        elemento=ele;
+        padre=null; 
     }
 
     public E element(){ 

@@ -3,10 +3,11 @@ package ar.edu.uns.cs.ed.tdas.tdaarbolbinario;
 import ar.edu.uns.cs.ed.tdas.Position;
 
 public class BTNodo<E> implements Position<E> {
-    protected E elemento;
-    protected BTNodo<E> padre;
-    protected BTNodo<E> hijoD;
-    protected BTNodo<E> hijoI;
+    private E elemento;
+    private BTNodo<E> padre;
+    private BTNodo<E> hijoD;
+    private BTNodo<E> hijoI;
+    
     public BTNodo(E e, BTNodo<E> p){
         elemento=e;
         padre=p;

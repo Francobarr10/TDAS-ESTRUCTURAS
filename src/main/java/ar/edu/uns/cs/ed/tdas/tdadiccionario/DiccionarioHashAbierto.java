@@ -79,19 +79,19 @@ public class DiccionarioHashAbierto<K,V> implements Dictionary<K,V>{
                 cant--;
                 return r;   
             }
-    }
-   throw new InvalidEntryException("Entrada no valida");
+        }
+        throw new InvalidEntryException("Entrada no valida");
     }
 
     @Override
     public Iterable<Entry<K, V>> entries() {
-    PositionList<Entry<K,V>> entradas = new ListaDoblementeEnlazada<>();
-    for ( int i =0; i <n ; i ++){
-        for (Entry<K,V> e: tabla[i]){
-            entradas.addLast(e);
+        PositionList<Entry<K,V>> entradas = new ListaDoblementeEnlazada<>();
+        for ( int i =0; i <n ; i ++){
+            for (Entry<K,V> e: tabla[i]){
+                entradas.addLast(e);
+            }
         }
-    }
-    return entradas;
+        return entradas;
     }
     private int h(K key){
         if (key == null )throw new InvalidKeyException("Clave nula no permitida");

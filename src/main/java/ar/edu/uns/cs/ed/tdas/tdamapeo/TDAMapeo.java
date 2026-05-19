@@ -1,5 +1,5 @@
 package ar.edu.uns.cs.ed.tdas.tdamapeo;
-
+import ar.edu.uns.cs.ed.tdas.excepciones.InvalidKeyException;
 import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
 import ar.edu.uns.cs.ed.tdas.tdalista.ListaDoblementeEnlazada;
 import ar.edu.uns.cs.ed.tdas.Entry;
@@ -16,8 +16,9 @@ public int size() {
 public boolean isEmpty() {
     return M.isEmpty();
 }
-public V get(K key){
-    for (Entry<K,V> e: M){
+public V get(K key){//
+  if(key == null) throw new InvalidKeyException("Clave nula no permitida");
+  for (Entry<K,V> e: M){
       if (e.getKey().equals(key)){ 
         return e.getValue();
       }    
@@ -25,6 +26,7 @@ public V get(K key){
     return null;
 }
 public V put(K key, V value){
+  if (key == null) throw new InvalidKeyException("Clave nula no permitida");
   for (Position<Entry<K,V>> p : M.positions()){
     if (p.element().getKey().equals(key)){
       V valorviejo = p.element().getValue();
@@ -36,6 +38,7 @@ public V put(K key, V value){
   return null;
 }
 public V remove(K key){
+  if (key == null) throw new InvalidKeyException("Clave nula no permitida");
   for (Position<Entry<K,V>>p: M.positions()){
     if (p.element().getKey().equals(key)){
       V valorviejo = p.element().getValue();
