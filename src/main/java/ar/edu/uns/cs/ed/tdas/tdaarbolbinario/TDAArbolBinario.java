@@ -1,5 +1,7 @@
 package ar.edu.uns.cs.ed.tdas.tdaarbolbinario;
 import java.util.Iterator;
+import java.util.Map;
+
 import ar.edu.uns.cs.ed.tdas.tdadiccionario.Dictionary;
 import ar.edu.uns.cs.ed.tdas.Position;
 import ar.edu.uns.cs.ed.tdas.excepciones.BoundaryViolationException;
@@ -9,6 +11,8 @@ import ar.edu.uns.cs.ed.tdas.excepciones.InvalidPositionException;
 import ar.edu.uns.cs.ed.tdas.tdadiccionario.TDADiccionario;
 import ar.edu.uns.cs.ed.tdas.tdalista.ListaDoblementeEnlazada;
 import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
+import ar.edu.uns.cs.ed.tdas.tdamapeo.MapHashAbierto;
+import ar.edu.uns.cs.ed.tdas.tdamapeo.TDAMapeo;
 
 public class TDAArbolBinario<E> implements BinaryTree<E> {
    protected int size;
@@ -158,7 +162,7 @@ public class TDAArbolBinario<E> implements BinaryTree<E> {
         if(hijoD.getPadre()!=padre||hijoD==padre.getLeft()) throw new InvalidPositionException("posicion no valida");//c4
         return addRight(p, e);
     }// lo mismo q el anterior
-
+    
     @Override
     public void removeExternalNode(Position<E> p) {
         if(p==null||!isExternal(p)||isEmpty()) throw new InvalidPositionException("posicicon no valida");//c1
@@ -171,9 +175,35 @@ public class TDAArbolBinario<E> implements BinaryTree<E> {
                 n.getPadre().setLeft(null);
             else
                 n.getPadre().setRight(null);
+            size--;
         }
     }//c1+max(c2+c3,c4+k*(c5+c6)) pert al orden O(k) y en el peor caso k<=n por lo tanto es de O(n)
-
+public Map<Character,Integer> eliminarHojas (BinaryTree<Character> a, Position<Character> p){
+    if (p==null) throw new InvalidPositionException(null);
+    Map<Character,Integer> m= new MapHashAbierto();
+    PositionList<Position<Character>> lh= new ListaDoblementeEnlazada<Position<Character>>();
+    BuscarHojas(lh, p,a);
+    for(Position<Character> t:lh){
+        if(m.get(t.element())==null)
+            m.put(t.element(),1);
+        else
+            m.put(t.element(),m.get(t.element())+1);
+    }
+    while(!lh.isEmpty()){
+        a.removeExternalNode(lh.first().element());
+        lh.remove(lh.first());
+    }
+    return m;
+}
+private void BuscarHojas (PositionList<Position<Character>> l, Position<Character> p, BinaryTree<Character> a){
+    if (a.isExternal(p))
+        l.addLast(p);
+    else 
+        if (a.hasLeft(p))
+            BuscarHojas(l, a.left(p), a);
+        if (a.hasRight(p))
+            BuscarHojas(l, a.right(p), a);
+}
     @Override
     public void removeInternalNode(Position<E> p) {
         if (p==null||isEmpty()||!isInternal(p)) throw new InvalidPositionException("posicion no valida");//c1
@@ -274,7 +304,7 @@ public class TDAArbolBinario<E> implements BinaryTree<E> {
         }
     }
     public Dictionary<E,E> dicDeBin (){
-        Dictionary<E, E> d= new TDADiccionario<E,E>();
+        Dictionary<E, E> d= new TDADiccionario<E,E>();//c1
         for(Position<E> pos: positions()){
                 BTNodo<E> n= checkPosition(pos);
                 if(n.getLeft()!=null)
@@ -284,6 +314,7 @@ public class TDAArbolBinario<E> implements BinaryTree<E> {
             }
         return d;
     }
+
     public Iterable<Character> notacionInfija(BinaryTree<Character> a){
         PositionList<Character> l = new ListaDoblementeEnlazada<Character>();
         if (!a.isEmpty()){
@@ -334,6 +365,7 @@ public class TDAArbolBinario<E> implements BinaryTree<E> {
             l.remove(l.first());
         }
     }
+
     private void postorden(BTNodo<E> n, PositionList<Position<E>> l){
         if (n.getLeft()!=null)
             postorden(n.getLeft(), l);
@@ -341,6 +373,7 @@ public class TDAArbolBinario<E> implements BinaryTree<E> {
             postorden(n.getRight(), l);
         l.addLast(n);
     }
+
     public void eliminarSubarbol2(Position<E> p){
         if(p==null)throw new InvalidPositionException("pos no valida");
         BTNodo<E> n= checkPosition(p);
@@ -363,5 +396,141 @@ public class TDAArbolBinario<E> implements BinaryTree<E> {
         if(n.getRight()!=null)
             cant+=contarSubArbol(n.getRight());
         return cant;
+    }
+
+    public void removeNode1(Position<E> p) {
+        //si el arbol eta vacio, no hay ninguna posicion para eliminar
+        if(isEmpty()){
+            throw new InvalidPositionException("Arbol vacio, no se puede eliminar");
+        }
+        //validamos la posicion recibida y la convertimos al nodo real 
+        BTNodo<E> nodo = checkPosition(p);
+
+        //guardamos las referencias a sus posibles hijos
+        BTNodo<E> hijoIzquierdo = nodo.getLeft();
+        BTNodo<E> hijoDerecho = nodo.getRight();
+
+        //si tiene dos hijos, no podemos eliminarlo con esta operacion, el padre del nodo eliminado solo puede reemplazarlo por una unica referencia
+        if(hijoIzquierdo != null && hijoDerecho != null){
+            throw new InvalidPositionException("No se puede eliminar un nodo con dos hijos, el padre no puede apuntar a dos nodos, solo tiene una unica referencia");
+        }
+
+        //determinamos cual es el unico hijo del nodo si existe. Si el nodo es hoja, hijo queda en null
+        BTNodo<E> hijo;
+        if(hijoIzquierdo != null){
+            hijo = hijoIzquierdo;
+        }else{
+            hijo = hijoDerecho;
+        }
+
+        //Caso 1: el nodo a eliminar es la raiz
+        if(nodo == raiz){
+            //Si hijo es null, el arbol queda vacio. Si hijo no es null, ese hijo pasa a ser la raiz
+            raiz = hijo;
+
+            if(hijo != null){
+                hijo.setPadre(null);
+            }
+        }
+
+        //Caso 2: el nodo a eliminar no es la raiz
+        else{
+            //obtenemos el padre del nodo que voy a eliminar
+            BTNodo<E> padre = nodo.getPadre();
+
+            //si el nodo era hijo izquierdo de su padre, el padre ahora debe apuntar al hijo del nodo eliminado, si el nodo era hoja, hijo vale null
+            if(padre.getLeft() == nodo){
+                padre.setLeft(hijo);
+            }
+
+            //si el nodo era hijo derecho de su padre, el padre ahora debe apuntar al hijo del nodo eliminado, si el nodo era hoja, hijo vale null
+            else if(padre.getRight() == nodo){
+                padre.setRight(hijo);
+            }
+
+            //si no aparece ni como hijo izquierdo ni como derecho , entonces las referencias internas del arbol estan mal armadas
+            else{
+                throw new InvalidPositionException("La estructura del arbol es invalida");
+            }
+
+            //si el nodo eliminado tenia un hijo, ese hijo ahora pasa a depender del padre del nodo eliminado
+            if(hijo != null){
+                hijo.setPadre(padre);
+            }
+        }
+        //actualizamos la cantidad
+        size--;
+    }
+    public Map<Character,Integer> eliminarHoja(BinaryTree<Character> a, Position<Character> p){
+        BTNodo<Character>  n = checkPosition(p);
+        Map<Character,Integer> M = new MapHashAbierto<Character, Integer>();
+        recpost(M, n,a);
+        return M;
+    }
+    private void recpost (Map<Character,Integer> m, BTNodo<Character> n, BinaryTree<Character> a){
+        boolean erahoja =(n.getLeft()== null && n.getRight()== null); 
+        if (n.getLeft()!=null)
+            recpost(m,n.getLeft(),a);
+        if(n.getRight()!= null)
+            recpost(m, n.getRight(),a);
+        if (erahoja){
+            Character c= n.element();
+            Integer valor= m.get(c);
+            if( valor==null)
+                m.put(c,1);
+            else 
+                m.put(c,valor + 1);
+            TDAArbolBinario<Character> A= (TDAArbolBinario<Character>)a;
+            if(n==A.raiz){
+                A.raiz=null;
+                A.size=0;
+            }else{
+                if(n.getPadre().getLeft()==n){
+                    n.getPadre().setLeft(null);
+                    A.size--;
+                }else{ 
+                    n.getPadre().setRight(null);
+                    A.size--;
+                }
+            }
+        }
+    }
+    public Map<Character, Integer> cantOperadores(BinaryTree<Character> a){
+        Map<Character, Integer> m= new TDAMapeo<>();
+        for(Position<Character> p: a.positions()){
+            if(a.isInternal(p)){
+                Character c= p.element();
+                Integer valor= m.get(c);
+                if(valor==null) 
+                    m.put(c,0);
+                else 
+                    m.put(c, valor+1);
+            }
+        }
+        return m;
+    }
+    public Map<String,Integer> cantidadE (BinaryTree<String> a){
+        Map <String, Integer> m = new MapHashAbierto<String, Integer>();
+        m.put("operadores",0);
+        m.put("pares",0);
+        m.put("impares",0);
+        inorden3(a,a.root(),m);
+        return m;
+    }
+    private void inorden3(BinaryTree<String> a, Position<String> p, Map<String, Integer> m){
+        if (a.hasLeft(p)){
+            inorden3(a,a.left(p),m);
+        }
+        if(a.isInternal(p))
+            m.put("operadores", m.get("operadores")+1);
+        else{
+            Integer n= Integer.parseInt(p.element());
+            if (n % 2==0 )
+                m.put("pares", m.get("pares")+1);
+            else
+                m.put("impares",m.get("impares")+1);
+        }
+        if (a.hasRight(p))
+            inorden3(a,a.left(p),m);   
     }
 }

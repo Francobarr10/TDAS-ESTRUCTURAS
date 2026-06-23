@@ -2,11 +2,12 @@ package ar.edu.uns.cs.ed.tdas.tdaarbol;
 
 import ar.edu.uns.cs.ed.tdas.Position;
 import ar.edu.uns.cs.ed.tdas.tdalista.ListaDoblementeEnlazada;
+import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
 
 public class TNodo<E> implements Position<E>{
     private E elemento;
     private TNodo<E> padre;
-    private ListaDoblementeEnlazada<TNodo<E>> hijos;
+    private PositionList<TNodo<E>> hijos;
 
     public TNodo(E e, TNodo<E> padre){
         elemento = e;
@@ -23,7 +24,7 @@ public class TNodo<E> implements Position<E>{
         return elemento; 
     }
 
-    public ListaDoblementeEnlazada<TNodo<E>> getHijos(){ 
+    public PositionList<TNodo<E>> getHijos(){ 
         return hijos; 
     }
 
@@ -38,4 +39,5 @@ public class TNodo<E> implements Position<E>{
     public void setPadre( TNodo<E> padre ) { 
         this.padre = padre; 
     }
+
 }

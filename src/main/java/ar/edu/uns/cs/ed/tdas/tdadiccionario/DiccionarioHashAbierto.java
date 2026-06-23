@@ -6,6 +6,7 @@ import ar.edu.uns.cs.ed.tdas.TDAEntry;
 import ar.edu.uns.cs.ed.tdas.tdalista.ListaDoblementeEnlazada;
 import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidKeyException;
+import ar.edu.uns.cs.ed.tdas.tdaarbol.TNodo;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidEntryException;
 
 
@@ -120,4 +121,39 @@ public class DiccionarioHashAbierto<K,V> implements Dictionary<K,V>{
 // k = n, y queda:
 // T(n)=O(n)
 // entonces T(n)=O(n)
+    public boolean todas (K key, V value ){
+        if (key== null) throw new InvalidKeyException("key no valida");
+        int i= Math.abs(key.hashCode() % n);
+        for (Entry<K,V> e: buckets[i]){
+            if(e.getKey().equals(key) && !e.getValue().equals(value))    
+                return false;
+        }
+        return true;
+    }
+public iterable<E> convertirAHoja(Position <E> p ){
+    PositionList<E> l = new ListaDoblementeEnlazada<E>();
+    TNodo<E> n= checkPosition(p);
+    if (n.getHijos().size()==0)
+        return l;
+    else {
+        posorden (l, n);
+    l.remove(l.last());// esto lo q hace es remover el elemento de n que viene de la posicion p y lo q hace es q saca de la lista de elementos eliminados al elemento de n 
+    while (!n.getHijos().isEmpty()){
+        n.getHijos().first().element().setPadre(null);
+        n.getHijos().remove(n.getHijos().first());
+    }
+    size-=l.size();
+    return l;
+    }
+}
+private void posorden(PositionList<E> l , TNodo<E> n){
+    for (TNodo<E> j;n.getHijos())
+        posorden(l,j);
+    l.addLast(n.element());
+}
+
+
+
+
+
 }

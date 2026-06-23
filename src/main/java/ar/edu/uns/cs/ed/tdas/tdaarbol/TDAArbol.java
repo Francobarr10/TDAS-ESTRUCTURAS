@@ -7,10 +7,12 @@ import ar.edu.uns.cs.ed.tdas.excepciones.BoundaryViolationException;
 import ar.edu.uns.cs.ed.tdas.excepciones.EmptyTreeException;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidOperationException;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidPositionException;
+import ar.edu.uns.cs.ed.tdas.tdaarbolbinario.BinaryTree;
 import ar.edu.uns.cs.ed.tdas.tdalista.ListaDoblementeEnlazada;
 import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
 import ar.edu.uns.cs.ed.tdas.tdamapeo.Map;
 import ar.edu.uns.cs.ed.tdas.tdamapeo.MapHashAbierto;
+import ar.edu.uns.cs.ed.tdas.tdamapeo.TDAMapeo;
 
 public class TDAArbol<E>implements Tree<E> {
     protected TNodo<E> raiz;
@@ -194,6 +196,7 @@ public class TDAArbol<E>implements Tree<E> {
                 if (pos.element()==n){
                     n.getPadre().getHijos().remove(pos);//c5
                     size--;//c6
+                    break;
                 }
             }//k es igual a la cantidad de posiciones de la lista de hijos del padre del nodo de la posicion p
         }
@@ -214,7 +217,7 @@ public class TDAArbol<E>implements Tree<E> {
             }
         }else{
             TNodo<E> padre= n.getPadre();//c8
-            Position<TNodo<E>> posN=null;//c9
+            Position<TNodo<E>> posN=null;//c9, posn es 
             for(Position<TNodo<E>> pos: padre.getHijos().positions()){//aca n
                 if(pos.element()==n){
                     posN=pos;//c10
@@ -238,6 +241,7 @@ public class TDAArbol<E>implements Tree<E> {
         else
             removeInternalNode(p);//O(n)
     }//c1+max (O(n), O(n)) pertence al orden O(n)   
+    
     
     public void eliminarUltimoHijo(Position<E> p){
         if(isEmpty()||p==null) throw new InvalidPositionException("posicion no valida");
@@ -397,4 +401,80 @@ public class TDAArbol<E>implements Tree<E> {
         }
         return false;//c4
     }//c1+MAX(k*(c2+c3),C4) = C1+k(o(1))=K(o(1))= o(K) EN EL PEOR CASO K<=N ENTONCES ES DE ORDEN o(N)
+    public int sizeSubArbol(Position<E> p){
+        TNodo<E> n= checkPosition(p);
+        int cant= contar(n);
+        return cant;
+    }
+    private int contar(TNodo<E> n){
+        int cant=1;
+        if(n==raiz){
+            cant=size;
+            return cant;
+        }
+        if(!n.getHijos().isEmpty()){
+            for(TNodo<E> p:n.getHijos()){
+                cant= contar(p);
+            }
+        }
+        return cant;    
+    }
+
+    public void addNivelHoja(Tree<Character> a, int x, Character c){
+        PositionList<Position<Character>> l = new ListaDoblementeEnlazada<>();
+        buscar(l,x,a);
+        while (!l.isEmpty()){
+            Position<Character> n = l.first().element();
+            a.addFirstChild(n, c);
+            l.remove(l.first());
+        }
+    }
+    private void buscar (PositionList<Position<Character>> l,int x, Tree<Character> a){
+        for (Position<Character> p: a.positions()){
+            TNodo<Character> n = checkPosition(p);
+            if(a.isExternal(p) && nivel(n)==x )
+                l.addLast(p);
+        }
+    }
+
+    private int nivel (TNodo<Character> p){
+            if(p.getPadre()==null)
+                return 0;
+            return 1 + nivel(p.getPadre());
+    }
+public Iterable<E> eliminarDescendientes(Position <E> p)throws InvalidPositionException{
+if (p==null) throw new InvalidPositionException(null);
+PositionList<E> le= new ListaDoblementeEnlazada<E>();
+TNodo<E> n= checkPosition(p);
+if(n.getHijos().size()==0)
+    return le;
+else{
+    PositionList<Position<E>> lp= new ListaDoblementeEnlazada<Position<E>>();
+    posorden3(lp,n.getHijos().first().element());
+    for(Position<E> e :lp){
+        le.addLast(e.element());
+    }
+    while (!n.getHijos().isEmpty()){
+        TNodo <E> tn= n.getHijos().first().element();
+        tn.setPadre(null);
+        n.getHijos().remove(n.getHijos().first());
+       }
+    
+    size-=lp.size();
+    return le;
+    }
+    }
+private void posorden3(PositionList<Position<E>> l, TNodo<E> n){
+    for(TNodo<E> j: n.getHijos())
+        posorden3(l,j);
+    l.addLast(n);
+} 
+private TNodo<E> checkposition4 (Position<E> p){
+    try{
+        if (p==null)throw new InvalidPositionException(null);
+        if(p.element() ==null) throw new InvalidPositionException(null);
+        return (TNodo<E>)p;
+    }catch(ClassCastException e){ throw new InvalidPositionException(null);
+    }
+    }
 }

@@ -45,4 +45,6 @@ public class BTNodo<E> implements Position<E> {
     public void setRight(BTNodo<E> r){
         hijoD=r;
     }
+    cuando hago un for each con supongamos un Tnodo n, 
+    hago for( aca que seria : n.gethijos())Tnodo<E> o Position<TNodo<E>> 
 }
